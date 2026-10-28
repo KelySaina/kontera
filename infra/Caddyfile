@@ -1,0 +1,19 @@
+# Caddy interne au conteneur : sert le PWA statique sur :80 (pas de TLS ici, le
+# Caddy du host s'en charge en reverse-proxy). Fallback SPA + cache des assets.
+:80 {
+	root * /srv
+	encode gzip zstd
+
+	# Les assets hashés (vite) sont immuables : cache long.
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	# Le service worker et l'index ne doivent pas être mis en cache agressivement.
+	@nocache path /sw.js /index.html /manifest.webmanifest
+	header @nocache Cache-Control "no-cache"
+
+	try_files {path} /index.html
+	file_server
+
+	header -Server
+}

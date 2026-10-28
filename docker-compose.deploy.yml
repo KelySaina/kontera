@@ -1,0 +1,17 @@
+# Compose de déploiement sur le VPS.
+# L'image est construite par le CI et poussée sur GHCR ; ici on ne fait que la
+# tirer et l'exécuter. Le conteneur est exposé uniquement en local (127.0.0.1)
+# et le Caddy du host fait le reverse-proxy HTTPS vers lui.
+services:
+  web:
+    image: ghcr.io/kelysaina/kontera:${IMAGE_TAG:-latest}
+    container_name: kontera-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4330:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

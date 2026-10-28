@@ -1,0 +1,32 @@
+{
+  "name": "kontera",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Répartition équitable des frais d'électricité JIRAMA entre appartements",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "idb-keyval": "^6.2.1",
+    "pinia": "^2.2.6",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.3",
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.8",
+    "vue-tsc": "^2.1.10"
+  }
+}
