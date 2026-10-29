@@ -42,16 +42,26 @@ describe('prévision — tranche réduite partagée', () => {
     expect(r.expectedTotal).toBe(cost(30, T))
   })
 
-  it('6. répartition de la tranche réduite entre deux appartements', () => {
-    // A=60, B=40 → total 100. Tranche réduite 50 répartie 30/20.
+  it('6. répartition 50/50 de la tranche réduite entre deux appartements', () => {
+    // A=60, B=40 → total 100. Tranche réduite 50 répartie 25/25.
     const r = computePrevision({ kwhA: 60, kwhB: 40 }, T)
     expect(r.split.reducedKwhUsed).toBe(50)
-    expect(r.split.A.reducedKwh).toBeCloseTo(30, 6)
-    expect(r.split.B.reducedKwh).toBeCloseTo(20, 6)
-    // A : 30*500 + 30*750 = 37500 ; B : 20*500 + 20*750 = 25000
-    expect(r.contributionA).toBe(30 * 500 + 30 * 750)
-    expect(r.contributionB).toBe(20 * 500 + 20 * 750)
+    expect(r.split.A.reducedKwh).toBe(25)
+    expect(r.split.B.reducedKwh).toBe(25)
+    // A : 25*500 + 35*750 = 38750 ; B : 25*500 + 15*750 = 23750
+    expect(r.contributionA).toBe(25 * 500 + 35 * 750)
+    expect(r.contributionB).toBe(25 * 500 + 15 * 750)
     expect(r.expectedTotal).toBe(cost(100, T))
+  })
+
+  it('reliquat de tranche : un appartement sous sa moitié cède le reste', () => {
+    // A=10, B=100 → A n'utilise que 10 kWh réduits, B récupère les 40 restants.
+    const r = computePrevision({ kwhA: 10, kwhB: 100 }, T)
+    expect(r.split.A.reducedKwh).toBe(10)
+    expect(r.split.B.reducedKwh).toBe(40)
+    expect(r.contributionA).toBe(10 * 500)
+    expect(r.contributionB).toBe(40 * 500 + 60 * 750)
+    expect(r.expectedTotal).toBe(cost(110, T))
   })
 
   it('invariant : A.total + B.total === cost(total) sur un échantillon', () => {
@@ -92,7 +102,7 @@ describe('régularisation réelle', () => {
     const reg = regularize({ realA: 40, realB: 60 }, T)
     expect(reg.totalCost).toBe(cost(100, T))
     expect(reg.split.A.total).not.toBe(prev.contributionA)
-    expect(reg.split.A.total).toBe(20 * 500 + 20 * 750) // A=40: 20 réduit, 20 normal
+    expect(reg.split.A.total).toBe(25 * 500 + 15 * 750) // A=40: 25 réduit, 15 normal
     expect(reg.split.A.total + reg.split.B.total).toBe(reg.totalCost)
   })
 

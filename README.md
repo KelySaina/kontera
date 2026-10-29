@@ -52,8 +52,8 @@ cout(K) = min(K, 50) * 500 + max(K - 50, 0) * 750     (Ar)
 ```
 
 La tranche réduite de 50 kWh est **partagée par le compteur principal**, répartie
-entre A et B au prorata de leurs consommations (sans jamais être attribuée à des
-kWh inexistants). Invariant garanti et testé : `coût_A + coût_B = coût_total`.
+à parts égales entre A et B (25/25 kWh), sans jamais être attribuée à des kWh
+inexistants : si l'un consomme moins que sa moitié, le reliquat revient à l'autre. Invariant garanti et testé : `coût_A + coût_B = coût_total`.
 
 ### Soldes & transferts
 

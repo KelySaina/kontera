@@ -4,8 +4,8 @@
  * Règle déterministe (documentée) :
  *  1. Additionner les kWh prévus par A et B.
  *  2. Déterminer les kWh de tranche réduite disponibles = min(total, seuil).
- *  3. Répartir ces kWh entre A et B au prorata de leurs estimations, sans
- *     dépasser leur consommation prévue.
+ *  3. Répartir ces kWh à parts égales entre A et B, sans dépasser leur
+ *     consommation prévue (le reliquat éventuel revient à l'autre).
  *  4. Facturer le reste au tarif normal.
  *  5. En déduire la contribution prévisionnelle de chacun et le total attendu.
  *

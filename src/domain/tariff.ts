@@ -40,8 +40,9 @@ function breakdown(kwh: number, reducedKwh: number, tariff: Tariff): CostBreakdo
 
 /**
  * Répartit le coût d'un compteur entre deux appartements A et B qui
- * consomment `kwhA` et `kwhB`, en **partageant** la tranche réduite au prorata
- * de leurs consommations (dans la limite de ce que chacun consomme).
+ * consomment `kwhA` et `kwhB`, en **partageant** la tranche réduite à parts
+ * égales (50/50), dans la limite de ce que chacun consomme. Si un appartement
+ * consomme moins que sa moitié, le reliquat revient à l'autre.
  *
  * Propriétés garanties :
  *  - A.total + B.total === cost(kwhA + kwhB)  (après arrondi au ariary)
@@ -58,14 +59,12 @@ export function splitCost(kwhA: number, kwhB: number, tariff: Tariff): Split {
   // kWh de tranche réduite réellement disponibles (jamais plus que le total).
   const reducedAvailable = Math.min(total, tariff.reducedThreshold)
 
-  // Répartition proportionnelle de la tranche réduite. Comme reducedAvailable
-  // <= total, chaque part reste <= à la consommation de l'appartement.
-  let reducedA = 0
-  let reducedB = 0
-  if (total > 0) {
-    reducedA = (reducedAvailable * a) / total
-    reducedB = reducedAvailable - reducedA
-  }
+  // Répartition à parts égales de la tranche réduite, plafonnée à la
+  // consommation de chacun ; le reliquat non consommé passe à l'autre.
+  // Comme reducedAvailable <= total, reducedB reste <= b.
+  const half = reducedAvailable / 2
+  const reducedA = Math.min(a, Math.max(half, reducedAvailable - b))
+  const reducedB = reducedAvailable - reducedA
 
   const rawA = breakdown(a, reducedA, tariff)
   const rawB = breakdown(b, reducedB, tariff)
